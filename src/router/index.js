@@ -1,7 +1,5 @@
 import {createRouter, createWebHistory} from 'vue-router'
 
-console.log(createWebHistory)
-console.log(createRouter)
 const routes = [
     {
         path: '/',
@@ -10,7 +8,8 @@ const routes = [
     {
         path: '/home',
         name: 'home',
-        component: () => import('@/components/Index.vue')
+        // component: () => import('@/components/Index.vue')
+        component: () => import('@/components/Scale.vue')
     }
 ]
 
