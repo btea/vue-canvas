@@ -1,5 +1,10 @@
 <template>
-  <h1>hello world</h1>
+  <div class="container">
+    <div class="menu"></div>
+    <div class="view">
+      <router-view></router-view>
+    </div>  
+  </div>
 </template>
 
 <script lang="ts">
@@ -8,17 +13,20 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-  h1{
-    border-radius: 3px;
+@width: 400px;
+.container{
+  margin: 0;
+  padding: 0;
+  display: flex;
+  height: 100%;
+  .menu{
+    width: @width;
+    height: 100%;
+    overflow-y: auto;
   }
-</style>
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  .view{
+    flex: 1;
+  }
 }
+
 </style>
