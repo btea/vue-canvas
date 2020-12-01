@@ -3,13 +3,18 @@ import {createRouter, createWebHistory} from 'vue-router'
 const routes = [
     {
         path: '/',
-        redirect: 'home'
+        redirect: 'chart'
     },
     {
         path: '/home',
         name: 'home',
         // component: () => import('@/components/Index.vue')
         component: () => import('@/components/Scale.vue')
+    },
+    {
+        path: '/chart',
+        name: 'chart',
+        component: () => import('@/components/Chart.vue')
     }
 ]
 

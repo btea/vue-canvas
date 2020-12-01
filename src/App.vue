@@ -13,7 +13,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@width: 400px;
+@width: 100px;
 .container{
   margin: 0;
   padding: 0;
