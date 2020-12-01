@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "monaco-editor": "^0.21.2",
+    "monaco-editor-webpack-plugin": "^2.0.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-beta.13"
   },
@@ -35,7 +37,10 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "no-debugger": 0,
+      "no-unused-vars": 0
+    }
   },
   "browserslist": [
     "> 1%",
