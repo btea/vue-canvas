@@ -1,5 +1,3 @@
-import { options } from "less"
-
 export default class Canvas{
     constructor(el) {
         let {width, height} = this.getStyle(el)
@@ -12,6 +10,7 @@ export default class Canvas{
         this.right = 100
         this.bottom = 150
         this.el = el
+        this.tickLen = 5
         this.create()
         this.renderAxis()
     }
@@ -25,7 +24,6 @@ export default class Canvas{
         let ctx = el.getContext('2d')
         ctx.scale(ratio, ratio)
         this.ctx = ctx
-        console.log(el)
         this.el.appendChild(el)
     }
     getStyle(el) {
@@ -36,19 +34,21 @@ export default class Canvas{
     }
     pointsCalc(points) {
         const {xAxis, yAxis, type} = points
+        this.smooth = points.smooth || false
         const {max, min} = this.getPeakValue(yAxis)
         let w = this.width - this.left - this.right
         let h = this.height - this.top - this.bottom
         let len = xAxis.length
         let diffx = Math.floor(w / len)
-        let x_p = [], p_s = []
+        let x_p = [], p_s = [], x_tick = [], y_tick = [], y_label = []
         for(let i = 0; i < len; i++) {
-            x_p.push(i * diffx + diffx / 2 + this.left)
+            let v = i * diffx + diffx / 2 + this.left
+            x_p.push(v)
+            x_tick.push((i + 1) * diffx + this.left)
         }
         let yLen = 5
         
-        let diffY = Math.floor((max - min) / yLen)
-        console.log(diffY)
+        let diffY = Math.floor(max / yLen)
         yAxis.forEach((y, i) => {
             let v = h / yLen * y / diffY
             v = this.height - this.bottom - Math.floor(v)
@@ -57,8 +57,22 @@ export default class Canvas{
                 y: v
             })
         })
-        this.drawLine(p_s)
-        this.drawPoint(p_s)
+        for(let i = 0; i <= yLen; i++) {
+            y_tick.push(h  * i / yLen + this.top)
+            y_label.push(diffY * i)
+        }
+        this.points = p_s
+        this.x_tick = x_tick
+        this.y_tick = y_tick
+        this.y_label = y_label
+        if (this.smooth) {
+            this.drawBezierCurve()
+        }else {
+            this.drawLine(p_s)
+        }
+        this.drawPoint(p_s)  // 绘制数据点
+        this.drawTick()      // 绘制刻度
+        this.drawSplitLine() // 绘制辅助线
     }
     drawLine(points) {
         let ctx = this.ctx
@@ -82,14 +96,111 @@ export default class Canvas{
             ctx.closePath()
         })
     }
+    drawBezierCurve() {
+        const {points, ctx} = this
+        ctx.save()
+        ctx.beginPath()
+        ctx.strokeStyle = '#6cf'
+        points.forEach((item, index) => {
+            let scale = 0.1
+            // 前一个点坐标
+            let last1X, last1Y, last2X, last2Y, nowX, nowY, nextX, nextY;
+            let cAx, cAy, cBx, cBy;
+            nowX = item.x
+            nowY = item.y
+            if (index === 0) {
+                ctx.moveTo(nowX, nowY)
+                return
+            }
+            last1X = points[index - 1].x
+            last1Y = points[index - 1].y
+            if (index !== points.length - 1) {
+                nextX = points[index + 1].x
+                nextY = points[index + 1].y
+                cBx = nowX - (nextX - last1X) * scale
+                cBy = nowY - (nextY - last1Y) * scale
+            }
+            if (index === 1) {
+                cAx = last1X + nowX * scale
+                if (last1Y > nowY) {
+                    cAy = last1Y - nowY * scale
+                }else {
+                    cAy = last1Y + nowX * scale
+                }
+                ctx.bezierCurveTo(cAx, cAy, cBx, cBy, nowX, nowY)
+                return
+            }
+            last2X = points[index - 2].x
+            last2Y = points[index - 2].y
+            cAx = last1X + (nowX - last2X) * scale
+            cAy = last1Y + (nowY - last2Y) * scale
+            if (index === points.length - 1) {
+                cBx = nowX - (nowX - last1X) * scale
+                cBy = nowY - (nowY - last1Y) * scale
+            }
+            ctx.bezierCurveTo(cAx, cAy, cBx, cBy, nowX, nowY)
+        })
+        ctx.stroke();
+        ctx.restore();
+    }
+    drawTick() {
+        const {ctx, x_tick, y_tick, y_label} = this
+        let y = this.height - this.bottom
+        let x = this.left
+        x_tick.forEach(tick => {
+            ctx.save()
+            ctx.beginPath()
+            ctx.strokeStyle = '#000'
+            ctx.moveTo(tick, y)
+            ctx.lineTo(tick, y + this.tickLen)
+            ctx.stroke()
+            ctx.closePath()
+            ctx.restore()
+        })
+        y_tick.forEach((tick, i) => {
+            ctx.save()
+            ctx.beginPath()
+            ctx.strokeStyle = '#000'
+            ctx.moveTo(x, tick)
+            ctx.lineTo(x - this.tickLen, tick)
+            ctx.stroke()
+            ctx.closePath()
+            ctx.restore()
+        })
+        y_label.forEach((label, i) => {
+            ctx.font = '14px "微软雅黑"'
+            ctx.textBaseline = 'middle'
+            ctx.textAlign = 'right'
+            ctx.fillText(y_label[y_label.length - i - 1], x - this.tickLen, y_tick[i])
+        })
+    }
+    drawSplitLine() {
+        const {ctx, y_tick} = this
+        let y = this.width - this.right
+        let x = this.left
+        // 最后一条线和坐标轴重合，可忽略
+        y_tick.slice(0, -1).forEach(v => {
+            ctx.save()
+            ctx.beginPath()
+            ctx.strokeStyle = '#000'
+            ctx.lineWidth = 0.5
+            ctx.moveTo(x, v)
+            ctx.lineTo(y, v)
+            ctx.stroke()
+            ctx.restore()
+        })        
+    }
     renderAxis() {
         let ctx = this.ctx
+        ctx.save()
         ctx.beginPath()
+        ctx.strokeStyle = '#000'
         ctx.moveTo(this.left, this.top)
         ctx.lineTo(this.left, this.height - this.bottom)
         ctx.lineTo(this.width - this.right, this.height - this.bottom)
         // ctx.closePath()
         ctx.stroke()
+        ctx.restore()
     }
     getPeakValue(points) {
         let max, min
@@ -98,5 +209,8 @@ export default class Canvas{
         return {
             max, min
         }
+    }
+    clear() {
+        this.ctx.clearRect(0, 0, this.width, this.height)
     }
 }

@@ -13,14 +13,35 @@ export default {
     setup() {
         let chart = ref(null)
         let code = ref(null)
+        let render
         let pointsDeal = options => {
             let box = chart.value
-            let c = new Canvas(box)
-            c.pointsCalc(options)
+            if (!render) {
+                render = new Canvas(box)
+            }
+            render.clear()
+            render.renderAxis()
+            render.pointsCalc(options)
         }
         let getOptions = (option) => {
-            option = eval(option)
-            pointsDeal(option)
+            try {
+                option = eval(option)
+                pointsDeal(option)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        let throttle = (fn, time = 2000) => {
+            let timer            
+            return () => {
+                if (timer) {
+                    clearTimeout(timer)
+                }
+                timer = setTimeout(() => {
+                    fn()
+                    timer = null
+                }, time)
+            }
         }
         onMounted(() => {
             let el = code.value
@@ -28,8 +49,9 @@ export default {
                 value: [
                     'option = {',
                     '   xAxis: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],',
-                    '   yAxis: [820, 932, 901, 934, 1290, 1330, 132],',
-                    '   type: "line"',
+                    '   yAxis: [820, 932, 901, 934, 1290, 1330, 1320],',
+                    '   type: "line",',
+                    '   smooth: true',
                     '}'
                 ].join('\n'),
                 language: 'javascript',
@@ -46,6 +68,10 @@ export default {
                 autoIndent: false //自动布局
             })
             getOptions(editor.getValue())
+            editor.onDidChangeModelContent(throttle(() => {
+                const newValue = editor.getValue()
+                getOptions(newValue)
+            }))
         }) 
         return {
             chart,
