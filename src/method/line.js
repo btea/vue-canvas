@@ -11,8 +11,10 @@ export default class Canvas{
         this.bottom = 150
         this.el = el
         this.tickLen = 5
+        this.r = 3
         this.create()
         this.renderAxis()
+        this.bindEvent()
     }
     create() {
         let el = document.createElement('canvas')
@@ -31,6 +33,36 @@ export default class Canvas{
             return window.getComputedStyle(el)
         }
         return el.currentStyle
+    }
+    bindEvent() {
+        this.el.addEventListener('mousemove', this.throttle((e) => {
+            let x = e.offsetX, y = e.offsetY, isIn = false
+            let {points, r, el} = this
+            for(let i = 0; i < points.length; i++) {
+                let a, b, v,p = points[i]
+                a = Math.abs(p.x - x)
+                b = Math.abs(p.y - y)
+                v = Math.hypot(a, b)
+                if (v <= r) {
+                    el.style.cursor = 'pointer'
+                    isIn = true
+                    break
+                }
+            }
+            if (!isIn) {
+                el.style.cursor = 'default'
+            }
+        }))
+    }
+    throttle(fn, time = 200) {
+        let timer = null
+        return (e) => {
+            if (timer) {
+                clearTimeout(timer)
+                timer = null
+            }
+            setTimeout(fn, time, e)
+        }
     }
     pointsCalc(points) {
         const {xAxis, yAxis, type} = points
@@ -91,7 +123,7 @@ export default class Canvas{
         points.forEach(p => {
             ctx.beginPath()
             ctx.strokeStyle = 'aqua'
-            ctx.arc(p.x, p.y, 5, 0, Math.PI * 2)
+            ctx.arc(p.x, p.y, this.r, 0, Math.PI * 2)
             ctx.stroke()
             ctx.closePath()
         })

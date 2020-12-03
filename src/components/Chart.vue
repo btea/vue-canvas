@@ -1,12 +1,24 @@
 <template>
     <div class="chart-render">
-        <div class="code" ref="code"></div>
-        <div class="chart" ref="chart"></div>
+        <div class="head">
+            <a href="https://microsoft.github.io/monaco-editor/api/modules/monaco.editor.html" target="_blank">editor Api接口</a>
+            <div class="theme">
+                <span>切换主题</span>
+                <select @change="changeTheme" v-model="theme">
+                    <option v-for="t in themeList" :value="t" :key="t" :label="t"></option>
+                </select>
+            </div>
+            
+        </div>
+        <div class="area">
+            <div class="code" ref="code"></div>
+            <div class="chart" ref="chart"></div>
+        </div>
     </div>
 </template>
 <script>
 import * as monaco from 'monaco-editor'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import Canvas from '../method/line'
 
 export default {
@@ -43,6 +55,11 @@ export default {
                 }, time)
             }
         }
+        let theme = ref('vs')
+        const themeList = reactive(['vs', 'vs-dark', 'hc-black'])
+        let changeTheme = (v) => {
+            monaco.editor.setTheme(theme.value)
+        }
         onMounted(() => {
             let el = code.value
             let editor = monaco.editor.create(el, {
@@ -75,15 +92,24 @@ export default {
         }) 
         return {
             chart,
-            code
+            code,
+            theme,
+            themeList,
+            changeTheme
         }
     }
 }
 </script>
 <style lang="less" scoped>
+@head: 100px;
 .chart-render{
-    height: 100vh;
-    display: flex;
+    .head{
+        height: @head;
+    }
+    .area{
+        height: calc(100vh - @head);
+        display: flex;
+    }
     .code,.chart{
         flex: 1;
     }
