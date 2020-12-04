@@ -1,9 +1,6 @@
 <template>
-  <div class="container">
-    <div class="menu"></div>
-    <div class="view">
-      <router-view></router-view>
-    </div>  
+  <div class="box">
+    <router-view class="views"></router-view>  
   </div>
 </template>
 
@@ -14,19 +11,7 @@ export default {
 </script>
 <style lang="less" scoped>
 @width: 100px;
-.container{
-  margin: 0;
-  padding: 0;
-  display: flex;
+.box,.views{
   height: 100%;
-  .menu{
-    width: @width;
-    height: 100%;
-    overflow-y: auto;
-  }
-  .view{
-    flex: 1;
-  }
 }
-
 </style>

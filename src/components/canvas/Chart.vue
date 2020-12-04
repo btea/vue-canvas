@@ -1,12 +1,17 @@
 <template>
     <div class="chart-render">
         <div class="head">
-            <a href="https://microsoft.github.io/monaco-editor/api/modules/monaco.editor.html" target="_blank">editor Api接口</a>
+            <el-link type="primary" href="https://microsoft.github.io/monaco-editor/api/modules/monaco.editor.html" target="_blank">editor Api接口</el-link>
             <div class="theme">
                 <span>切换主题</span>
-                <select @change="changeTheme" v-model="theme">
-                    <option v-for="t in themeList" :value="t" :key="t" :label="t"></option>
-                </select>
+                <el-select v-model="theme" @change="switchTheme">
+                    <el-option
+                        v-for="t in themeList"
+                        :key="t"
+                        :value="t"
+                        :label="t"
+                    ></el-option>
+                </el-select>
             </div>
             
         </div>
@@ -19,7 +24,7 @@
 <script>
 import * as monaco from 'monaco-editor'
 import { onMounted, reactive, ref } from 'vue'
-import Canvas from '../method/line'
+import Canvas from '@/method/line'
 
 export default {
     setup() {
@@ -57,7 +62,7 @@ export default {
         }
         let theme = ref('vs')
         const themeList = reactive(['vs', 'vs-dark', 'hc-black'])
-        let changeTheme = (v) => {
+        let switchTheme = (v) => {
             monaco.editor.setTheme(theme.value)
         }
         onMounted(() => {
@@ -95,19 +100,25 @@ export default {
             code,
             theme,
             themeList,
-            changeTheme
+            switchTheme
         }
     }
 }
 </script>
 <style lang="less" scoped>
-@head: 100px;
+@head: 80px;
 .chart-render{
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     .head{
+        padding-left: 100px;
         height: @head;
+        max-width: 1200px;
     }
     .area{
-        height: calc(100vh - @head);
+        flex: 1;
         display: flex;
     }
     .code,.chart{

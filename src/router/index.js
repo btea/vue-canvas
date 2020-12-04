@@ -3,7 +3,12 @@ import {createRouter, createWebHistory} from 'vue-router'
 const routes = [
     {
         path: '/',
-        redirect: 'chart'
+        redirect: 'index'
+    },
+    {
+        path: '/index',
+        name: 'index',
+        component: () => import('@/components/Index.vue')
     },
     {
         path: '/home',
@@ -12,9 +17,16 @@ const routes = [
         component: () => import('@/components/Scale.vue')
     },
     {
-        path: '/chart',
-        name: 'chart',
-        component: () => import('@/components/Chart.vue')
+        path: '/canvas',
+        name: 'canvas',
+        component: () => import('@/components/canvas/Canvas.vue'),
+        children: [
+            {
+                path: '/canvas/chart',
+                name: 'chart',
+                component: () => import('@/components/canvas/Chart.vue')
+            }
+        ]
     }
 ]
 
