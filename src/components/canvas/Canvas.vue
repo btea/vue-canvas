@@ -21,24 +21,24 @@ export default {
     setup() {
         const it = getCurrentInstance().ctx;
         const menu = reactive([
-            { name: "图表", path: "/chart" },
-            { name: "图片", path: "/image" },
-            { name: "动画", path: "/animation" },
-            { name: "文字", path: "/text" },
-            { name: "音频", path: "/audio" },
-            { name: "视频", path: "/video" },
+            { name: "图表", path: "chart" },
+            { name: "图片", path: "image" },
+            { name: "动画", path: "animation" },
+            { name: "文字", path: "text" },
+            { name: "音频", path: "audio" },
+            { name: "视频", path: "video" },
         ]);
-        let activeMenu = ref("/chart");
+        let activeMenu = ref("chart");
         const switchMenu = (item) => {
             activeMenu.value = item.path;
-            go("/canvas" + item.path);
+            go(item.path);
         };
-        let go = (path) => {
-            it.$router.push(path);
+        let go = (name) => {
+            it.$router.push({ name: name });
         };
         let a = 10;
         onMounted(() => {
-            go("/canvas/chart");
+            go("chart");
         });
         return {
             menu,
