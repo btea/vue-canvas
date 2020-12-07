@@ -8,48 +8,56 @@ const routes = [
     {
         path: "/index",
         name: "index",
-        component: () => import("@/components/Index.vue"),
+        component: () => import("@/components/Index"),
     },
     {
         path: "/home",
         name: "home",
         // component: () => import('@/components/Index.vue')
-        component: () => import("@/components/Scale.vue"),
+        component: () => import("@/components/Scale"),
     },
     {
         path: "/canvas",
         name: "canvas",
-        component: () => import("@/components/canvas/Canvas.vue"),
+        component: () => import("@/components/canvas/Canvas"),
         children: [
             {
-                path: "/canvas/chart",
+                path: "canvasChart",
                 name: "chart",
-                component: () => import("@/components/canvas/Chart.vue"),
+                component: () => import("@/components/canvas/Chart"),
             },
             {
-                path: "/canvas/image",
+                path: "canvasImage",
                 name: "image",
-                component: () => import("@/components/canvas/Image.vue"),
+                component: () => import("@/components/canvas/Image"),
             },
             {
-                path: "/canvas/animation",
+                path: "canvasAnimation",
                 name: "animation",
-                component: () => import("@/components/canvas/Animation.vue"),
+                component: () => import("@/components/canvas/Animation"),
+                redirect: { name: "rect" },
+                children: [
+                    {
+                        path: "rect",
+                        name: "rect",
+                        component: () => import("@/components/canvas/animation/Rect"),
+                    },
+                ],
             },
             {
-                path: "/canvas/text",
+                path: "canvasText",
                 name: "text",
-                component: () => import("@/components/canvas/Text.vue"),
+                component: () => import("@/components/canvas/Text"),
             },
             {
-                path: "/canvas/audio",
+                path: "canvasAudio",
                 name: "audio",
-                component: () => import("@/components/canvas/Audio.vue"),
+                component: () => import("@/components/canvas/Audio"),
             },
             {
-                path: "/canvas/video",
+                path: "canvasVideo",
                 name: "video",
-                component: () => import("@/components/canvas/Video.vue"),
+                component: () => import("@/components/canvas/Video"),
             },
         ],
     },
