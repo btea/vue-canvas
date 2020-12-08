@@ -12,7 +12,9 @@
 import { onMounted, ref } from "vue";
 export default {
     setup() {
-        let rect, ctx, max;
+        let rect = ref(null),
+            ctx,
+            max;
         let speed = 10,
             width = 0,
             req,
@@ -28,6 +30,11 @@ export default {
                 cancelAnimationFrame(req);
                 return;
             }
+            // 一条很重要的注释说明：
+            // 在开始绘制图形时，如果没有调用 beginPath 方法，那么即使画布被清空，当再次绘制新的
+            // 图形时，历史绘制的图形都会出现在画布上
+            // 这似乎也是一个很有意思的功能，可以用来做什么？回顾历史？
+            ctx.beginPath();
             ctx.strokeStyle = color;
             ctx.rect(x - width / 2, y - width / 2, width, width);
             ctx.stroke();
@@ -43,32 +50,35 @@ export default {
             (x = e.layerX), (y = e.layerY), (width = 0);
             color = randomColor();
             requestAnimationFrame(draw);
+            draw();
         };
         onMounted(() => {
-            rect = document.querySelector(".z-rect-can");
-            ctx = rect.getContext("2d");
-            let style = window.getComputedStyle(rect);
+            let el = rect.value;
+            ctx = el.getContext("2d");
+            let style = window.getComputedStyle(el);
             max = w = parseInt(style.width);
             h = parseInt(style.height);
-            rect.style.width = w + "px";
-            rect.style.height = h + "px";
-            rect.width = ratio * w;
-            rect.height = ratio * h;
+            el.style.width = w + "px";
+            el.style.height = h + "px";
+            el.width = ratio * w;
+            el.height = ratio * h;
             ctx.scale(ratio, ratio);
         });
         let clear = () => {
             ctx.clearRect(0, 0, w, h);
         };
-        return { start, clear };
+        return { start, clear, rect };
     },
 };
 </script>
 <style lang="less" scoped>
-@h: 100px;
+@h: 60px;
 .z-rect {
     height: 100%;
     position: relative;
     .params {
+        padding-top: 10px;
+        padding-left: 10px;
         height: @h;
     }
     .box {
