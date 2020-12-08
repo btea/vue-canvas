@@ -38,7 +38,8 @@ export default {
         };
         let a = 10;
         onMounted(() => {
-            go("chart");
+            let route = it.$router.currentRoute.value.matched[1].name;
+            activeMenu.value = route;
         });
         return {
             menu,
