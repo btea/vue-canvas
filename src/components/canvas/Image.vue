@@ -1,3 +1,9 @@
 <template>
-    <h1>图片</h1>
+    <div class="z-iamge"></div>
 </template>
+<script>
+export default {
+    setup() {},
+};
+</script>
+<style lang="less" scoped></style>
