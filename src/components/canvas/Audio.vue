@@ -35,7 +35,9 @@ export default {
             c_ctx.clearRect(0, 0, c_w, c_h);
             for (let i = 0; i < meterNum; i++) {
                 let v = array[i * step];
-                c_ctx.fillRect(i * (meterWidth + gap), c_h - v, meterWidth, c_h || minHeight);
+                let x = i * (meterWidth + gap);
+                let y = c_h * (1 - v / 256); // analyser.fftSize(512) / 2 => 256
+                c_ctx.fillRect(x, y, meterWidth, c_h || minHeight);
             }
             req = requestAnimationFrame(render);
         }
