@@ -6,7 +6,7 @@
                 v-for="m in list"
                 :key="m.val"
                 :class="{ act: m.val === active }"
-                @click="switchMenu(item)"
+                @click="switchMenu(m)"
             >
                 <i class="icon"></i>
                 <span class="tx">{{ m.name }}</span>
@@ -18,13 +18,18 @@
     </div>
 </template>
 <script>
-import { reactive, ref } from "vue";
+import { getCurrentInstance, reactive, ref } from "vue";
 export default {
     setup() {
-        let list = reactive([{ val: "rect", name: "矩形" }]);
+        let list = reactive([
+            { val: "rect", name: "矩形" },
+            { val: "circle", name: "圆形" },
+        ]);
+        let { ctx } = getCurrentInstance();
         let active = ref("rect");
         let switchMenu = (item) => {
             active.value = item.val;
+            ctx.$router.push({ name: item.val });
         };
         return {
             list,
