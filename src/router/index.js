@@ -49,6 +49,12 @@ const routes = [
                         meta: { name: "rect" },
                         component: () => import("@/components/canvas/animation/Rect"),
                     },
+                    {
+                        path: "circle",
+                        name: "circle",
+                        meta: { name: "circle" },
+                        component: () => import("@/components/canvas/animation/Circle"),
+                    },
                 ],
             },
             {
