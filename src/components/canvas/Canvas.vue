@@ -38,8 +38,11 @@ export default {
         };
         let a = 10;
         onMounted(() => {
-            let route = it.$router.currentRoute.value.matched[1].name;
-            activeMenu.value = route;
+            let route = it.$router.currentRoute.value.matched;
+            if (route[1]) {
+                activeMenu.value = route[1].name;
+            }
+            // console.log(route);
         });
         return {
             menu,

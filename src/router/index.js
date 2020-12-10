@@ -23,6 +23,7 @@ const routes = [
         name: "canvas",
         meta: { name: "canvas" },
         component: () => import("@/components/canvas/Canvas"),
+        redirect: { name: "chart" },
         children: [
             {
                 path: "canvasChart",
