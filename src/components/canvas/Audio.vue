@@ -1,16 +1,31 @@
 <template>
     <div class="z-audio">
-        <canvas ref="wave" width="600" height="600"></canvas>
-        <audio controls autoplay loop ref="audio"></audio>
+        <div class="audio-menu">
+            <div
+                class="item"
+                v-for="item in menus"
+                :class="{ active: item.name === activeMenu }"
+                :key="item.name"
+            >
+                <img :src="item.val" alt="" />
+            </div>
+        </div>
+        <div class="audio-box">
+            <canvas ref="wave" width="600" height="600"></canvas>
+            <audio controls autoplay loop ref="audio"></audio>
+        </div>
     </div>
 </template>
 <script>
-import { onBeforeMount, onBeforeUnmount, onMounted, ref } from "vue";
-import audioSource from "@/assets/media/audio.mp3";
+import { onBeforeMount, onBeforeUnmount, onMounted, reactive, ref } from "vue";
+import audioSource from "@/assets/media/qixiannv.mp3";
+import bar from "@/assets/img/bar.png";
 export default {
     setup() {
         let wave = ref(null);
         let audio = ref(null);
+        let activeMenu = ref("bar");
+        let menus = reactive([{ name: "bar", val: bar }]);
 
         let ctx = new AudioContext();
         let analyser = ctx.createAnalyser();
@@ -48,7 +63,7 @@ export default {
             connect();
             let el = wave.value;
             c_ctx = el.getContext("2d");
-            c_w = window.innerWidth;
+            c_w = window.innerWidth - 300;
             c_h = 300;
             el.width = c_w;
             el.height = c_h;
@@ -62,8 +77,26 @@ export default {
             c_ctx.fillStyle = gradient;
             render();
         }
+        function bindEvent() {
+            let aud = audio.value;
+            aud.addEventListener("pause", () => {
+                cancelAnimationFrame(req);
+                console.log("pause");
+            });
+            aud.addEventListener("play", () => {
+                console.log("play");
+                render();
+            });
+            aud.addEventListener("error", () => {
+                console.log("播放失败");
+            });
+            aud.addEventListener("ended", () => {
+                console.log("播放结束");
+            });
+        }
         onMounted(() => {
             initCanvas();
+            bindEvent();
         });
         onBeforeUnmount(() => {
             audio.value.src = "";
@@ -73,12 +106,39 @@ export default {
         return {
             wave,
             audio,
+            menus,
+            activeMenu,
         };
     },
 };
 </script>
 <style lang="less" scoped>
+@w: 300px;
 .z-audio {
-    text-align: center;
+    height: 100%;
+    display: flex;
+    .audio-menu {
+        width: @w;
+        height: 100%;
+        box-shadow: -3px 0 5px 0 #6cf;
+    }
+    .item {
+        text-align: center;
+        cursor: pointer;
+        margin: 20px 0;
+        img {
+            width: 200px;
+        }
+        &.active {
+            img {
+                box-shadow: 0 0 5px 0 #6cf;
+            }
+        }
+    }
+    .audio-box {
+        height: 100%;
+        flex: 1;
+        text-align: center;
+    }
 }
 </style>
