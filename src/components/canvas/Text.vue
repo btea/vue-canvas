@@ -3,6 +3,7 @@
         <div class="ope">
             <input class="tx-inp" type="text" v-model="word" />
             <button class="btn-ope" @click="renderText">文字粒子</button>
+            <button class="voice" @click="playVoice">语音</button>
             <span>字体</span>
             <el-select v-model="lang" @change="languageSwitch">
                 <el-option
@@ -133,12 +134,24 @@ export default {
             init();
         };
 
+        let playVoice = () => {
+            let audio = document.createElement("audio");
+            let text = document.getElementsByClassName("text")[0];
+            let src = "http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&per=1&spd=8&text=";
+            audio.addEventListener("ended", () => {
+                document.body.removeChild(audio);
+            });
+            audio.src = src + word.value;
+            document.body.appendChild(audio);
+            audio.play();
+        };
         return {
             renderText,
             word,
             lang,
             langList,
             languageSwitch,
+            playVoice,
         };
     },
 };
@@ -154,7 +167,8 @@ export default {
         outline: none;
         border: 1px solid #00f2fe;
     }
-    .btn-ope {
+    .btn-ope,
+    .voice {
         display: inline-block;
         background-color: #ff0081;
         color: #fff;
@@ -164,6 +178,11 @@ export default {
         outline: none;
         padding: 10px 20px;
         box-shadow: 0 2px 25px rgba(255, 0, 130, 0.5);
+    }
+    .voice {
+        background: #6cf;
+        box-shadow: 0 2px 25px rgba(102, 204, 255, 0.5);
+        margin: 0 15px;
     }
     #text {
         background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
