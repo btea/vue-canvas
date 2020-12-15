@@ -11,7 +11,7 @@
             </div>
         </div>
         <div class="audio-box">
-            <canvas ref="wave" width="600" height="600"></canvas>
+            <canvas class="canvas" ref="wave" width="600" height="600"></canvas>
             <audio controls autoplay loop ref="audio"></audio>
         </div>
     </div>
@@ -24,7 +24,7 @@ export default {
     setup() {
         let wave = ref(null);
         let audio = ref(null);
-        let activeMenu = ref("bar");
+        let activeMenu = ref("circle");
         let menus = reactive([{ name: "bar", val: bar }]);
 
         let ctx = new AudioContext();
@@ -64,19 +64,46 @@ export default {
             let el = wave.value;
             c_ctx = el.getContext("2d");
             c_w = window.innerWidth - 300;
-            c_h = 300;
+            c_h = 600;
             el.width = c_w;
             el.height = c_h;
             meterNum = c_w / (meterWidth + gap);
 
-            let gradient = c_ctx.createLinearGradient(0, 0, 0, 300);
+            let gradient = c_ctx.createLinearGradient(0, 0, 0, c_h);
             gradient.addColorStop(0, "#6cf");
             gradient.addColorStop(0.5, "#66fff8");
             gradient.addColorStop(1, "#66ff80");
             // c_ctx.fillStyle = "rgba(255, 255, 255, .5)";
             c_ctx.fillStyle = gradient;
-            render();
+            // render();
+            renderCircle();
         }
+        function renderCircle() {
+            let max = 100;
+            let array = new Uint8Array(analyser.frequencyBinCount); // lenght 512 / 2 => 256
+            analyser.getByteFrequencyData(array);
+            c_ctx.clearRect(0, 0, c_w, c_h);
+            let gradient = c_ctx.createLinearGradient(0, -200, 0, 0);
+            gradient.addColorStop(0, "#6cf");
+            gradient.addColorStop(0.5, "#66fff8");
+            gradient.addColorStop(1, "#66ff80");
+            c_ctx.fillStyle = gradient;
+            for (let i = 0; i < 120; i++) {
+                c_ctx.save();
+                c_ctx.translate(c_w / 2, c_h / 2);
+                let v = array[i];
+                v = (v / 256) * max;
+                if (v < 5) {
+                    v = 5;
+                }
+                let angle = (Math.PI / 180) * 3 * i;
+                c_ctx.rotate(angle);
+                c_ctx.fillRect(0, -v - 150, 5, v);
+                c_ctx.restore();
+            }
+            req = requestAnimationFrame(renderCircle);
+        }
+
         function bindEvent() {
             let aud = audio.value;
             aud.addEventListener("pause", () => {
@@ -85,7 +112,12 @@ export default {
             });
             aud.addEventListener("play", () => {
                 console.log("play");
-                render();
+                let v = activeMenu.value;
+                if (v === "bar") {
+                    render();
+                } else {
+                    renderCircle();
+                }
             });
             aud.addEventListener("error", () => {
                 console.log("播放失败");
@@ -139,6 +171,12 @@ export default {
         height: 100%;
         flex: 1;
         text-align: center;
+    }
+    .canvas {
+        // background: url("https://img2.huashi6.com/images/resource/2020/12/06/h86138640p0.png?imageView2/3/q/100/interlace/1/w/1600/h/1600/format/webp");
+        background: url("https://img2.huashi6.com/images/resource/2019/03/17/737183h66p0.png?imageView2/3/q/100/interlace/1/w/1600/h/1600/format/webp");
+        background-size: cover;
+        background-position-y: center;
     }
 }
 </style>
