@@ -1,5 +1,7 @@
 <template>
-    <canvas ref="bubble" style="background: rgba(102, 204, 255, .2);"></canvas>
+    <div class="circle-box" ref="circle">
+        <canvas ref="bubble" style="background: rgba(102, 204, 255, .2);"></canvas>
+    </div>
 </template>
 <script>
 export default {
@@ -13,12 +15,14 @@ export default {
         };
     },
     mounted() {
-        this.init();
+        this.getStyle();
     },
     methods: {
-        init() {
-            let w = window.innerWidth - 300;
-            let h = window.innerHeight - 100;
+        getStyle() {
+            let box = this.$refs.circle;
+            let style = window.getComputedStyle(box);
+            let w = parseInt(style.width);
+            let h = parseInt(style.height);
             this.width = w;
             this.height = h;
             this.initCanvas(w, h);
@@ -189,3 +193,8 @@ export default {
     },
 };
 </script>
+<style lang="less" scoped>
+.circle-box {
+    height: 100%;
+}
+</style>
