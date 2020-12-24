@@ -17,6 +17,7 @@
 </template>
 <script>
 import { onMounted, getCurrentInstance, reactive, ref } from "vue";
+import { useRouter } from "vue-router";
 export default {
     setup() {
         const it = getCurrentInstance().ctx;
@@ -29,16 +30,18 @@ export default {
             { name: "视频", path: "video" },
         ]);
         let activeMenu = ref("chart");
+
+        const router = useRouter();
         const switchMenu = (item) => {
             activeMenu.value = item.path;
             go(item.path);
         };
         let go = (name) => {
-            it.$router.push({ name: name });
+            router.push({ name: name });
         };
         let a = 10;
         onMounted(() => {
-            let route = it.$router.currentRoute.value.matched;
+            let route = router.currentRoute.value.matched;
             if (route[1]) {
                 activeMenu.value = route[1].name;
             }
@@ -57,6 +60,9 @@ export default {
 .canvas {
     height: 100%;
     position: relative;
+    background: url("https://img2.huashi6.com/images/resource/2019/03/17/737183h66p0.png?imageView2/3/q/100/interlace/1/w/1600/h/1600/format/webp");
+    background-size: cover;
+    background-position-y: center;
     .canvas-h {
         height: @head;
         // background: linear-gradient(-45deg, #2edce29c, transparent);

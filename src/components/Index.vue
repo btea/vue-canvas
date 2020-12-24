@@ -15,6 +15,7 @@
 </template>
 <script>
 import { reactive, onMounted, getCurrentInstance } from "vue";
+import { useRouter } from "vue-router";
 export default {
     setup() {
         let list = reactive([
@@ -25,13 +26,15 @@ export default {
             { name: "js", path: "/js", disable: true },
         ]);
         // getCurrentInstance() 暴露出来的对象有很多属性
-        const it = getCurrentInstance().ctx;
+        // const it = getCurrentInstance().ctx;
+        const router = useRouter();
+
         let go = (item) => {
             if (item.disable) {
                 return;
             }
             let path = item.path;
-            it.$router.push(path);
+            router.push(path);
         };
         return {
             list,

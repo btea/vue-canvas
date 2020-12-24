@@ -19,6 +19,7 @@
 </template>
 <script>
 import { getCurrentInstance, reactive, ref } from "vue";
+import { useRouter } from "vue-router";
 export default {
     setup() {
         let list = reactive([
@@ -27,9 +28,10 @@ export default {
         ]);
         let { ctx } = getCurrentInstance();
         let active = ref("rect");
+        const router = useRouter();
         let switchMenu = (item) => {
             active.value = item.val;
-            ctx.$router.push({ name: item.val });
+            router.push({ name: item.val });
         };
         return {
             list,
