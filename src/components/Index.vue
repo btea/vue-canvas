@@ -51,7 +51,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url("../assets/img/bg.jpg");
+    background-image: url("https://i0.hdslb.com/bfs/album/dd0d051ecedb59a421ebbe57bf8b262cc8e0370a.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     // background-clip: text;
