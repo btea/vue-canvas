@@ -18,16 +18,17 @@
     </div>
 </template>
 <script>
-import { getCurrentInstance, reactive, ref } from "vue";
-import { useRouter } from "vue-router";
+import { getCurrentInstance, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 export default {
     setup() {
         let list = reactive([
-            { val: "rect", name: "矩形" },
-            { val: "circle", name: "圆形" },
+            { val: 'rect', name: '矩形' },
+            { val: 'circle', name: '圆形' },
+            { val: 'rain', name: '降雨' },
         ]);
         let { ctx } = getCurrentInstance();
-        let active = ref("rect");
+        let active = ref('rect');
         const router = useRouter();
         let switchMenu = (item) => {
             active.value = item.val;
